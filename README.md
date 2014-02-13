@@ -37,8 +37,8 @@ var name = useShortName
   : Expr.Create( (SomeEntity x) => x.LongName );
 
 var query = from x in SomeTable
-        where x.SomeFlag && (x.OtherFlag || name.Call( x ) == name) && !x.AnotherFlag
-        select x;
+            where x.SomeFlag && (x.OtherFlag || name.Call( x ) == name) && !x.AnotherFlag
+            select x;
 
 return query.Expand();
 ```

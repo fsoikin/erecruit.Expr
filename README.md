@@ -69,8 +69,8 @@ public static class Helpers {
 /// </summary>
 public IQueryable<Person> FindByFullName( string name ) {
 	var result = from p in Database.Persons
-							 where Helpers.GetFullName( p ) == name
-							 select p;
+	             where Helpers.GetFullName( p ) == name
+	             select p;
 							 
 	return result.Expand();
 }

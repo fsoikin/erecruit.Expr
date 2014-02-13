@@ -85,6 +85,6 @@ Because extension methods are basically just syntactic sugar for static methods,
 	}
 
 	var result = from p in Database.Persons
-							 where p.GetFullName() == name
-							 select p;
+	             where p.GetFullName() == name
+	             select p;
 ```

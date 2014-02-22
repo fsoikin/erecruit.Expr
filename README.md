@@ -120,7 +120,7 @@ We mean "Composition" in the computer science sense. You know, the way you would
 
 ```cs
 	var customerFromOrder = Expr.Create( (Order o) => o.Customer );
-  var customerIDFromOrder = customerFromOrder.Compose( c => c.ID ); // Equivalent to "o => o.Customer.ID"
+	var customerIDFromOrder = customerFromOrder.Compose( c => c.ID ); // Equivalent to "o => o.Customer.ID"
 
 	IQueryable<Order> orders = ...;
 	var custIDs = orders.Select( customerIDFromOrder );
@@ -152,7 +152,7 @@ If you have a list of expressions, you can `fold` over it, achiving some interes
 	var isSpecialVIPJerk = subConditions.Fold( Expression.AndAlso ); // c => c.IsVIP && c.IsSpecial && c.IsJerk
 ```
 
-###Or here's a more real-life example:
+Or here's a more real-life example:
 
 ```cs
 	public IQueryable<Customer> GetCustomersInIncomeBrackets( IEnumerable<Range<int>> brackets ) {

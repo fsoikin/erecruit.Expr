@@ -2,7 +2,10 @@
 
 1. [Code reuse: invoke (i.e. embed) expressions within other, bigger expressions](#reuse).
 2. [More code reuse: call [specially formatted] static and extension methods within expressions](#more-reuse).
-3. 
+3. [Expression Creation, Simplified](#creation)
+4. [Expression Composition](#composition)
+5. [Predicate Composition](#predicate-composition)
+5. [Handling Lists of Expressions](#lists)
 
 ## <a name="reuse"></a>Code Reuse: Invoke (i.e. embed) expressions within other, bigger expressions.
 
@@ -87,4 +90,82 @@ Because extension methods are basically just syntactic sugar for static methods,
 	var result = from p in Database.Persons
 	             where p.GetFullName() == name
 	             select p;
+```
+
+## <a name="creation"></a>Expression Creation, Simplified.
+
+When you want to pass an expression to a method, such as `IEnumerable.Select` or `IEnumerable.Where`, the compiler
+can infer the necessary types for you, but what if you just want to put it in a variable for later?
+
+```cs
+	Expression<Func<Customer, IEnumerable<Order>>> orders = c => c.Orders;
+```
+
+And what if the return type happens to be anonymous?
+
+```cs
+	Expression<Func<Customer, ????>> orders = c => new { id = c.ID, orders = c.Orders };
+```
+
+A bit clunky, isn't it? But fear not! With `erecruit.Expr.Create` method, you can take advantage of the compiler type inference.
+Unfortunately, you still have to specify the input type (everything has limits, you know):
+
+```cs
+	var orders = Expr.Create( (Customer c) => new { id = c.ID, orders = c.Orders } );
+```
+
+## <a name="composition"></a>Expression Composition.
+
+We mean "Composition" in the computer science sense. You know, the way you would compose functions. Only with expressions:
+
+```cs
+	var customerFromOrder = Expr.Create( (Order o) => o.Customer );
+  var customerIDFromOrder = customerFromOrder.Compose( c => c.ID ); // Equivalent to "o => o.Customer.ID"
+
+	IQueryable<Order> orders = ...;
+	var custIDs = orders.Select( customerIDFromOrder );
+```
+
+## <a name="predicate-composition"></a>Predicate Composition.
+
+Predicates are expressions that return `bool`. Ergo, they ought to be subject to Boolean algebra:
+
+```cs
+	var isProcessed = Expr.Create( (Order o) => o.IsProcessed );
+	var isProcessedAndOld = isProcessed.And( o => o.Date < DateTime.Today ); // try also: ".Or()"
+	
+	IQueryable<Order> orders = ...;
+	var oldProcessedOrders = orders.Where( isProcessedAndOld );
+```
+
+## <a name="lists"></a>Handling Expression Lists.
+
+If you have a list of expressions, you can `fold` over it, achiving some interesting effects:
+
+```cs
+	var subConditions = new[] {
+		Expr.Create( (Customer c) => c.IsVIP ),
+		Expr.Create( (Customer c) => c.IsSpecial ),
+		Expr.Create( (Customer c) => c.IsJerk )
+	};
+	var isNonTrivialCustomer = subConditions.Fold( Expression.OrElse ); // c => c.IsVIP || c.IsSpecial || c.IsJerk
+	var isSpecialVIPJerk = subConditions.Fold( Expression.AndAlso ); // c => c.IsVIP && c.IsSpecial && c.IsJerk
+```
+
+###Or here's a more real-life example:
+
+```cs
+	public IQueryable<Customer> GetCustomersInIncomeBrackets( IEnumerable<Range<int>> brackets ) {
+		
+		var bracketFilters = brackets.Select( b => Expr.Create( (Customer c) => c.Income >= b.Start && c.Income <= b.End );
+		var bracketsFilter = bracketFilters.Fold( Expression.OrElse ); 
+
+		// bracketsFilter = c => 
+		//	   ( c.Income >= brackets[0].Start && c.Income <= brackets[0].End )
+		//	|| ( c.Income >= brackets[1].Start && c.Income <= brackets[1].End )
+		//	|| ...
+		//	|| ( c.Income >= brackets[n].Start && c.Income <= brackets[n].End )
+	
+		return Database.Customers.Where( bracketsFilter );
+	}
 ```

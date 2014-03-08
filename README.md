@@ -171,7 +171,7 @@ Or here's a more real-life example:
 	}
 ```
 
-## <a name="setter"> Obtain a property setter from a property expression
+## <a name="setter"></a> Obtain a property setter from a property expression
 
 If you have an expression that just returns one property of its argument, you can turn that expression around and make yourself a function which *assigns* that property.
 

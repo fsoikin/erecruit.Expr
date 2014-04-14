@@ -5,7 +5,8 @@
 3. [Expression Creation, Simplified](#creation)
 4. [Expression Composition](#composition)
 5. [Predicate Composition](#predicate-composition)
-5. [Handling Lists of Expressions](#lists)
+6. [Handling Lists of Expressions](#lists)
+7. [Obtain a property setter from a property expression](#setter)
 
 ## <a name="reuse"></a>Code Reuse: Invoke (i.e. embed) expressions within other, bigger expressions.
 
@@ -168,4 +169,16 @@ Or here's a more real-life example:
 	
 		return Database.Customers.Where( bracketsFilter );
 	}
+```
+
+## <a name="setter"></a> Obtain a property setter from a property expression
+
+If you have an expression that just returns one property of its argument, you can turn that expression around and make yourself a function which *assigns* that property.
+
+```cs
+  var nameProperty = Expr.Create( (Customer c) => c.Name );
+  var nameSetter = Expr.SetterFromGetter( nameProperty ).Compile();
+  
+  var myCustomer = ...;
+  nameSetter( myCustomer, "New Name" );
 ```

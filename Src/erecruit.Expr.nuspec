@@ -6,13 +6,13 @@
     <title>erecruit Expression Transform library</title>
     <authors>erecruit</authors>
     <owners>erecruit</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <projectUrl>http://github.com/erecruit/erecruit.Expr</projectUrl>
-    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <iconUrl>https://avatars1.githubusercontent.com/u/6667047?s=24</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Provides useful utility methods for C# expression tree transformation, including in-expression code reuse, predicate builder and more.</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <copyright>(c) erecruit 2014</copyright>
     <tags>Expression LINQ Lambda Predicate</tags>
   </metadata>
 </package>

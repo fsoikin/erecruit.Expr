@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 
-namespace erecruit.Utils
+namespace erecruit
 {
 	public static class Func
 	{

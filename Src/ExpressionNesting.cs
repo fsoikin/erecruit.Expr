@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace erecruit.Utils
+namespace erecruit
 {
 	// TODO: [fs] add Call/Expand support for two and three args
 	public static class ExpressionNesting
@@ -88,8 +88,8 @@ namespace erecruit.Utils
 
 					var sink = new SubstSink();
 					using ( Subst.SetSink( sink ) ) {
-						try { x.Invoke( null, x.GetParameters().Select( p => !p.ParameterType.IsByRef ? Activator.CreateInstance( p.ParameterType ) : null ).ToArray() ); }
-						catch { }
+						try { x.Invoke( null, x.GetParameters().Select( p => p.ParameterType.GetTypeInfo().IsValueType ? Activator.CreateInstance( p.ParameterType ) : null ).ToArray() ); }
+						catch ( Exception ex ) { throw new Exception( "There was an error while trying to substitute method " + x.DeclaringType.FullName + "." + x.Name, ex ); }
 						if ( sink.Expr == null ) throw new InvalidOperationException( "A method that is [Substitute]d must have a body wholly consisting of a call to Subst.Expr." );
 						if ( x.GetParameters().Any( p => p.IsOut ) ) throw new InvalidOperationException( "A method that is [Substitute]d cannot have 'out' or 'ref' parameters." );
 						if ( !sink.Expr.Parameters.Select( p => p.Type ).SequenceEqual( x.GetParameters().Select( p => p.ParameterType ) )

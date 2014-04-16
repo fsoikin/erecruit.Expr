@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>erecruit.Expr</id>
+    <version>0.1.1</version>
+    <title>erecruit Expression Transform Library</title>
+    <authors>erecruit</authors>
+    <owners>erecruit</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://github.com/erecruit/erecruit.Expr</projectUrl>
+    <iconUrl>https://avatars1.githubusercontent.com/u/6667047?s=24</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides useful utility methods for C# expression tree transformation, including in-expression code reuse, predicate builder and more.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>(c) erecruit 2014</copyright>
+    <tags>Expression LINQ Lambda Predicate</tags>
+  </metadata>
+	<files>
+		<file src="..\bin\Release\pcl\*.dll" target="lib\portable-windows8+net45" />
+		<file src="..\bin\Release\net45\*.dll" target="lib\net45" />
+	</files>
+</package>

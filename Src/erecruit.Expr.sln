@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr", "erecruit.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr.Tests", "..\Tests\erecruit.Expr.Tests.csproj", "{78D5A714-4061-46E2-8869-71AD92EF0F41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr.net45", "erecruit.Expr.net45.csproj", "{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{78D5A714-4061-46E2-8869-71AD92EF0F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78D5A714-4061-46E2-8869-71AD92EF0F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78D5A714-4061-46E2-8869-71AD92EF0F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

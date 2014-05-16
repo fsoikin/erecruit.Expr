@@ -9,10 +9,17 @@ using System.Reflection;
 
 namespace erecruit
 {
-	// TODO: [fs] add Call/Expand support for two and three args
 	public static class ExpressionNesting
 	{
 		public static TResult Call<TInput, TResult>( this Expression<Func<TInput, TResult>> expr, TInput arg ) {
+			throw new NotSupportedException( "This method is not intended to be actually executed. It is supposed to be used as part of an expression, in combination with the Expression.Expand() method." );
+		}
+
+		public static TResult Call<TInput1, TInput2, TResult>( this Expression<Func<TInput1, TInput2, TResult>> expr, TInput1 arg1, TInput2 arg2 ) {
+			throw new NotSupportedException( "This method is not intended to be actually executed. It is supposed to be used as part of an expression, in combination with the Expression.Expand() method." );
+		}
+
+		public static TResult Call<TInput1, TInput2, TInput3, TResult>( this Expression<Func<TInput1, TInput2, TInput3, TResult>> expr, TInput1 arg1, TInput2 arg2, TInput3 arg3 ) {
 			throw new NotSupportedException( "This method is not intended to be actually executed. It is supposed to be used as part of an expression, in combination with the Expression.Expand() method." );
 		}
 
@@ -30,26 +37,34 @@ namespace erecruit
 
 		class V : ExpressionVisitor
 		{
-			static readonly MethodInfo _callMethod = new Func<Expression<Func<int, int>>, int, int>( Call<int, int> ).GetMethodInfo().GetGenericMethodDefinition();
+			static readonly MethodInfo _callMethod1 = new Func<Expression<Func<int, int>>, int, int>( Call<int, int> ).GetMethodInfo().GetGenericMethodDefinition();
+			static readonly MethodInfo _callMethod2 = new Func<Expression<Func<int, int, int>>, int, int, int>( Call<int, int, int> ).GetMethodInfo().GetGenericMethodDefinition();
+			static readonly MethodInfo _callMethod3 = new Func<Expression<Func<int, int, int, int>>, int, int, int, int>( Call<int, int, int, int> ).GetMethodInfo().GetGenericMethodDefinition();
 
 			protected override Expression VisitMethodCall( MethodCallExpression node ) {
-				if ( node.Method.IsGenericMethod && node.Method.GetGenericMethodDefinition() == _callMethod ) {
-					var e = DigOutConstant( node.Arguments[0] ) as LambdaExpression;
-					if ( e == null ) throw new InvalidOperationException( "Cannot expand expression '" + node + "'. The first ('this') argument must be a constant (i.e. value of a property or a variable) of type Expression<T> and not null." );
+				var isCallMethod = IsCallMethod( node.Method );
+				var skipArguments = isCallMethod ? 1 : 0;
+				var substituteExpression =
+					isCallMethod
+					? DigOutConstant( node.Arguments[0] ) as LambdaExpression 
+					: GetSubstituteFor( node.Method );
 
-					return base.Visit( e.Body.ReplaceParameter( e.Parameters[0], node.Arguments[1] ) );
-				}
-				else {
-					var sbs = GetSubstituteFor( node.Method );
-					if ( sbs != null ) {
-						return base.Visit( sbs.Body.ReplaceParameters(
-							sbs.Parameters
-							.Zip( node.Arguments, ( p, a ) => new { p, a } )
-							.ToDictionary( x => x.p, x => x.a ) ) );
-					}
+				if ( substituteExpression == null && isCallMethod ) throw new InvalidOperationException( "Cannot expand expression '" + node + "'. The first ('this') argument must be a constant (i.e. value of a property or a variable) of type Expression<T> and not null." );
+				if ( substituteExpression != null ) {
+					if ( substituteExpression.Parameters.Count != node.Arguments.Count - skipArguments ) throw new InvalidOperationException( string.Format( "Malformed expression tree: sub-expression has {0} parameters, but {1} are supplied. The subexpression is: {2}", substituteExpression.Parameters.Count, node.Arguments.Count-skipArguments, substituteExpression ) );
+					return base.Visit( substituteExpression.Body.ReplaceParameters(
+						substituteExpression.Parameters
+						.Zip( node.Arguments.Skip( skipArguments ), ( p, a ) => new { p, a } )
+						.ToDictionary( x => x.p, x => x.a ) ) );
 				}
 
 				return base.VisitMethodCall( node );
+			}
+
+			static bool IsCallMethod( MethodInfo mi ) {
+				if ( !mi.IsGenericMethod ) return false;
+				var mid = mi.GetGenericMethodDefinition();
+				return mid == _callMethod1 || mid == _callMethod2 || mid == _callMethod3;
 			}
 
 			object DigOutConstant( Expression e ) {

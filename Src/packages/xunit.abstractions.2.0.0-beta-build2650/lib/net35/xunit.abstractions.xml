@@ -106,7 +106,7 @@
             <param name="value">The string representation of the test case.</param>
             <returns>The de-serialized test case.</returns>
         </member>
-        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.Run(Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions,Xunit.Abstractions.ITestFrameworkOptions)">
+        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.RunAll(Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions,Xunit.Abstractions.ITestFrameworkOptions)">
             <summary>
             Starts the process of running all the tests in the assembly.
             </summary>
@@ -114,7 +114,7 @@
             <param name="discoveryOptions">The options to be used during test discovery.</param>
             <param name="executionOptions">The options to be used during test execution.</param>
         </member>
-        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.Run(System.Collections.Generic.IEnumerable{Xunit.Abstractions.ITestCase},Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions)">
+        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.RunTests(System.Collections.Generic.IEnumerable{Xunit.Abstractions.ITestCase},Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions)">
             <summary>
             Starts the process of running selected tests in the assembly.
             </summary>
@@ -145,14 +145,11 @@
             <param name="name">The name of the value.</param>
             <param name="value">The value to be set.</param>
         </member>
-        <member name="T:Xunit.Abstractions.ITestClassMessage">
+        <member name="T:Xunit.Abstractions.IFinishedMessage">
             <summary>
-            Base message interface for all messages related to test classes.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.ITestCollectionMessage">
-            <summary>
-            Base message interface for all messages related to test collections.
+            This is the base message for various types of completion that can occur during the
+            various phases of execution process (e.g.,  test case, test class, test collection,
+            and assembly).
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.IMessageSinkMessage">
@@ -161,9 +158,62 @@
             used to communicate the status of discovery and execution of tests. 
             </summary>
         </member>
+        <member name="P:Xunit.Abstractions.IFinishedMessage.ExecutionTime">
+            <summary>
+            The execution time (in seconds) for this execution.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsFailed">
+            <summary>
+            The number of failing tests.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsRun">
+            <summary>
+            The total number of tests run.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsSkipped">
+            <summary>
+            The number of skipped tests.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.IMessageSink">
+            <summary>
+            Represents an endpoint for the reception of test messages.
+            </summary>
+        </member>
+        <member name="M:Xunit.Abstractions.IMessageSink.OnMessage(Xunit.Abstractions.IMessageSinkMessage)">
+            <summary>
+            Reports the presence of a message on the message bus. This method should
+            never throw exceptions.
+            </summary>
+            <param name="message">The message from the message bus</param>
+            <returns>Return <c>true</c> to continue running tests, or <c>false</c> to stop.</returns>
+        </member>
+        <member name="T:Xunit.Abstractions.ITestCaseMessage">
+            <summary>
+            Base message interface for all messages related to test cases.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.ITestCollectionMessage">
+            <summary>
+            Base message interface for all messages related to test collections.
+            </summary>
+        </member>
         <member name="P:Xunit.Abstractions.ITestCollectionMessage.TestCollection">
             <summary>
             Gets the test collection this test message is associated with.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.ITestCaseMessage.TestCase">
+            <summary>
+            The test case that is associated with this message.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.ITestClassMessage">
+            <summary>
+            Base message interface for all messages related to test classes.
             </summary>
         </member>
         <member name="P:Xunit.Abstractions.ITestClassMessage.ClassName">
@@ -176,19 +226,25 @@
             Base message interface for all messages related to tests.
             </summary>
         </member>
-        <member name="T:Xunit.Abstractions.ITestCaseMessage">
-            <summary>
-            Base message interface for all messages related to test cases.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.ITestCaseMessage.TestCase">
-            <summary>
-            The test case that is associated with this message.
-            </summary>
-        </member>
         <member name="P:Xunit.Abstractions.ITestMessage.TestDisplayName">
             <summary>
             The display name of the test.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.ITestResultMessage">
+            <summary>
+            This is the base interface for all individual test results (e.g., tests which
+            pass, fail, or are skipped).
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.ITestResultMessage.ExecutionTime">
+            <summary>
+            The execution time of the test, in seconds.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.ITestResultMessage.Output">
+            <summary>
+            The captured output of the test.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.IAfterTestFinished">
@@ -235,6 +291,17 @@
             The fully qualified type name of the <see cref="T:Xunit.Sdk.BeforeAfterTestAttribute"/>.
             </summary>
         </member>
+        <member name="T:Xunit.Abstractions.IDiscoveryCompleteMessage">
+            <summary>
+            This message indicates that the discovery process has been completed for
+            the requested assembly.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IDiscoveryCompleteMessage.Warnings">
+            <summary>
+            Gets the list of warnings that were raised during discovery.
+            </summary>
+        </member>
         <member name="T:Xunit.Abstractions.IErrorMessage">
             <summary>
             This message indicates that an error has occurred in the execution process. 
@@ -268,33 +335,6 @@
             <summary>
             The parent exception index for the exceptions; a -1 indicates that
             the exception in question has no parent.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.IFinishedMessage">
-            <summary>
-            This is the base message for various types of completion that can occur during the
-            various phases of execution process (e.g.,  test case, test class, test collection,
-            and assembly).
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IFinishedMessage.ExecutionTime">
-            <summary>
-            The execution time (in seconds) for this execution.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsFailed">
-            <summary>
-            The number of failing tests.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsRun">
-            <summary>
-            The total number of tests run.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IFinishedMessage.TestsSkipped">
-            <summary>
-            The number of skipped tests.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.ITestAssemblyFinished">
@@ -333,6 +373,11 @@
         <member name="P:Xunit.Abstractions.ITestAssemblyStarting.TestFrameworkDisplayName">
             <summary>
             Gets a display string which descibes the test framework and version number.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.ITestCaseDiscoveryMessage">
+            <summary>
+            This message indicates that a test case had been found during the discovery process.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.ITestCaseFinished">
@@ -396,22 +441,6 @@
         <member name="T:Xunit.Abstractions.ITestFailed">
             <summary>
             This message indicates that a test has failed.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.ITestResultMessage">
-            <summary>
-            This is the base interface for all individual test results (e.g., tests which
-            pass, fail, or are skipped).
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.ITestResultMessage.ExecutionTime">
-            <summary>
-            The execution time of the test, in seconds.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.ITestResultMessage.Output">
-            <summary>
-            The captured output of the test.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.ITestFinished">
@@ -478,62 +507,6 @@
         <member name="T:Xunit.Abstractions.ITestStarting">
             <summary>
             This message indicates that a test is about to start executing.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.IParameterInfo">
-            <summary>
-            Represents information about a method parameter. The primary implementation is based on runtime
-            reflection, but may also be implemented by runner authors to provide non-reflection-based
-            test discovery (for example, AST-based runners like CodeRush or Resharper).
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IParameterInfo.Name">
-            <summary>
-            The name of the parameter.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IParameterInfo.ParameterType">
-            <summary>
-            Gets the type of the parameter.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.IReflectionParameterInfo">
-            <summary>
-            Represents a reflection-backed implementation of <see cref="T:Xunit.Abstractions.IParameterInfo"/>.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IReflectionParameterInfo.ParameterInfo">
-            <summary>
-            Gets the underlying <see cref="P:Xunit.Abstractions.IReflectionParameterInfo.ParameterInfo"/> for the parameter.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.IDiscoveryCompleteMessage">
-            <summary>
-            This message indicates that the discovery process has been completed for
-            the requested assembly.
-            </summary>
-        </member>
-        <member name="P:Xunit.Abstractions.IDiscoveryCompleteMessage.Warnings">
-            <summary>
-            Gets the list of warnings that were raised during discovery.
-            </summary>
-        </member>
-        <member name="T:Xunit.Abstractions.IMessageSink">
-            <summary>
-            Represents an endpoint for the reception of test messages.
-            </summary>
-        </member>
-        <member name="M:Xunit.Abstractions.IMessageSink.OnMessage(Xunit.Abstractions.IMessageSinkMessage)">
-            <summary>
-            Reports the presence of a message on the message bus. This method should
-            never throw exceptions.
-            </summary>
-            <param name="message">The message from the message bus</param>
-            <returns>Return <c>true</c> to continue running tests, or <c>false</c> to stop.</returns>
-        </member>
-        <member name="T:Xunit.Abstractions.ITestCaseDiscoveryMessage">
-            <summary>
-            This message indicates that a test case had been found during the discovery process.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.IAssemblyInfo">
@@ -684,6 +657,23 @@
             reflected from (i.e., equivalent to MethodInfo.ReflectedType)
             </summary>
         </member>
+        <member name="T:Xunit.Abstractions.IParameterInfo">
+            <summary>
+            Represents information about a method parameter. The primary implementation is based on runtime
+            reflection, but may also be implemented by runner authors to provide non-reflection-based
+            test discovery (for example, AST-based runners like CodeRush or Resharper).
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IParameterInfo.Name">
+            <summary>
+            The name of the parameter.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IParameterInfo.ParameterType">
+            <summary>
+            Gets the type of the parameter.
+            </summary>
+        </member>
         <member name="T:Xunit.Abstractions.IReflectionAssemblyInfo">
             <summary>
             Represents a reflection-backed implementation of <see cref="T:Xunit.Abstractions.IAssemblyInfo"/>.
@@ -712,6 +702,16 @@
         <member name="P:Xunit.Abstractions.IReflectionMethodInfo.MethodInfo">
             <summary>
             Gets the underlying <see cref="P:Xunit.Abstractions.IReflectionMethodInfo.MethodInfo"/> for the method.
+            </summary>
+        </member>
+        <member name="T:Xunit.Abstractions.IReflectionParameterInfo">
+            <summary>
+            Represents a reflection-backed implementation of <see cref="T:Xunit.Abstractions.IParameterInfo"/>.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.IReflectionParameterInfo.ParameterInfo">
+            <summary>
+            Gets the underlying <see cref="P:Xunit.Abstractions.IReflectionParameterInfo.ParameterInfo"/> for the parameter.
             </summary>
         </member>
         <member name="T:Xunit.Abstractions.IReflectionTypeInfo">
@@ -827,7 +827,7 @@
         </member>
         <member name="P:Xunit.Abstractions.ITestCase.SourceInformation">
             <summary>
-            Get the source file name and line where the test is defined, if requested (and known).
+            Get or sets the source file name and line where the test is defined, if requested (and known).
             </summary>
         </member>
         <member name="P:Xunit.Abstractions.ITestCase.TestCollection">
@@ -858,6 +858,11 @@
             assembly.
             </remarks>
         </member>
+        <member name="P:Xunit.Abstractions.ITestCase.Arguments">
+            <summary>
+            The arguments that will be passed to the test method.
+            </summary>
+        </member>
         <member name="T:Xunit.Abstractions.ITestCollection">
             <summary>
             Represents a group of test cases. Test collections form the basis of the parallelization in
@@ -874,6 +879,11 @@
         <member name="P:Xunit.Abstractions.ITestCollection.DisplayName">
             <summary>
             Gets the display name of the test collection.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.ITestCollection.ID">
+            <summary>
+            Gets the test collection ID. Test collection equality is determined by comparing IDs.
             </summary>
         </member>
     </members>

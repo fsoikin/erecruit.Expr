@@ -4,6 +4,24 @@
         <name>xunit.core</name>
     </assembly>
     <members>
+        <member name="M:ExceptionExtensions.RethrowWithNoStackTraceLoss(System.Exception)">
+            <summary>
+            Rethrows an exception object without losing the existing stack trace information
+            </summary>
+            <param name="ex">The exception to re-throw.</param>
+            <remarks>
+            For more information on this technique, see
+            http://www.dotnetjunkies.com/WebLog/chris.taylor/archive/2004/03/03/8353.aspx.
+            The remote_stack_trace string is here to support Mono.
+            </remarks>
+        </member>
+        <member name="M:ExceptionExtensions.Unwrap(System.Exception)">
+            <summary>
+            Unwraps an exception to remove any wrappers, like <see cref="T:System.Reflection.TargetInvocationException"/>.
+            </summary>
+            <param name="ex">The exception to unwrap.</param>
+            <returns>The unwrapped exception.</returns>
+        </member>
         <member name="T:Guard">
             <summary>
             Guard class, used for guard clauses and argument validation
@@ -235,6 +253,18 @@
             Gets or sets the parameters passed to the member. Only supported for static methods.
             </summary>
         </member>
+        <member name="T:Xunit.Sdk.ArgumentFormatter">
+            <summary>
+            Formats arguments for display in theories.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ArgumentFormatter.Format(System.Object)">
+            <summary>
+            Format the value for presentation.
+            </summary>
+            <param name="value">The value to be formatted.</param>
+            <returns>The formatted value.</returns>
+        </member>
         <member name="T:Xunit.Sdk.BeforeAfterTestAttribute">
             <summary>
             Base attribute which indicates a test method interception (allows code to be run before and
@@ -253,6 +283,45 @@
             </summary>
             <param name="methodUnderTest">The method under test</param>
         </member>
+        <member name="T:Xunit.Sdk.DataDiscoverer">
+            <summary>
+            Default implementation of <see cref="T:Xunit.Sdk.IDataDiscoverer"/>. Uses reflection to find the
+            data associated with <see cref="T:Xunit.Sdk.DataAttribute"/>; may return <c>null</c> when called
+            without reflection-based abstraction implementations.
+            </summary>
+        </member>
+        <member name="T:Xunit.Sdk.IDataDiscoverer">
+            <summary>
+            This class is responsible for discovering the data available in an implementation
+            of <see cref="T:Xunit.Sdk.DataAttribute"/>. The discovery process may not always have access
+            to reflection (i.e., running in Resharper), so the discoverer must make a best
+            effort to return data, but may return null when there is not enough information
+            available (for example, if reflection is required to answer the question).
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IDataDiscoverer.GetData(Xunit.Abstractions.IAttributeInfo,Xunit.Abstractions.IMethodInfo)">
+            <summary>
+            Returns the data to be used to test the theory.
+            </summary>
+            <remarks>
+            This will be called during
+            discovery, at which point the <paramref name="testMethod"/> may or may not
+            be backed by reflection (i.e., implementing <see cref="T:Xunit.Abstractions.IReflectionMethodInfo"/>).
+            If the data is not available because reflection is required, then you may return
+            null to inform xUnit that the quantity of data is unknown at this point.
+            When the tests are run, if you returned back null during discovery, then this method
+            will be called again to retrieve the data, this time guaranteed to provide
+            an implementation of <see cref="T:Xunit.Abstractions.IReflectionMethodInfo"/>. At this time, you
+            must return the actual data, and returning null is not legal.
+            </remarks>
+            <param name="dataAttribute">The data attribute being discovered</param>
+            <param name="testMethod">The method that is being tested/discovered</param>
+            <returns>The theory data (or null during discovery, if not enough
+            information is available to enumerate the data)</returns>
+        </member>
+        <member name="M:Xunit.Sdk.DataDiscoverer.GetData(Xunit.Abstractions.IAttributeInfo,Xunit.Abstractions.IMethodInfo)">
+            <inheritdoc/>
+        </member>
         <member name="T:Xunit.Sdk.DataDiscovererAttribute">
             <summary>
             An attribute used to decorate classes which derive from <see cref="T:Xunit.Sdk.DataAttribute"/>,
@@ -268,25 +337,234 @@
             <param name="assemblyName">The name of the assembly that the discoverer type
             is located in, without file extension (f.e., 'xunit.execution')</param>
         </member>
+        <member name="T:Xunit.Sdk.ExceptionAggregator">
+            <summary>
+            Aggregates exceptions. Intended to run one or more code blocks, and collect the
+            exceptions thrown by those code blocks.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Xunit.Sdk.ExceptionAggregator"/> class.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.#ctor(Xunit.Sdk.ExceptionAggregator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Xunit.Sdk.ExceptionAggregator"/> class that
+            contains the exception list of its parent.
+            </summary>
+            <param name="parent">The parent aggregator to copy exceptions from.</param>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.Add(System.Exception)">
+            <summary>
+            Adds an exception to the aggregator.
+            </summary>
+            <param name="ex">The exception to be added.</param>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.Run(System.Action)">
+            <summary>
+            Runs the code, catching the exception that is thrown and adding it to
+            the aggregate.
+            </summary>
+            <param name="code">The code to be run.</param>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.RunAsync(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Runs the code, catching the exception that is thrown and adding it to
+            the aggregate.
+            </summary>
+            <param name="code">The code to be run.</param>
+        </member>
+        <member name="M:Xunit.Sdk.ExceptionAggregator.ToException">
+            <summary>
+            Returns an exception that represents the exceptions thrown by the code
+            passed to the <see cref="M:Xunit.Sdk.ExceptionAggregator.Run(System.Action)"/> or <see cref="M:Xunit.Sdk.ExceptionAggregator.RunAsync(System.Func{System.Threading.Tasks.Task})"/> method.
+            </summary>
+            <returns>Returns <c>null</c> if no exceptions were thrown; returns the
+            exact exception is a single exception was thrown; returns <see cref="T:System.AggregateException"/>
+            if more than one exception was thrown.</returns>
+        </member>
+        <member name="P:Xunit.Sdk.ExceptionAggregator.HasExceptions">
+            <summary>
+            Returns <c>true</c> if the aggregator has at least one exception inside it.
+            </summary>
+        </member>
+        <member name="T:Xunit.Sdk.IMessageAggregator">
+            <summary>
+            Represents an aggregator which collects and returns messages of arbitrary types.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IMessageAggregator.Add``1(``0)">
+            <summary>
+            Adds the specified message to the aggregation for the given type.
+            </summary>
+            <typeparam name="TMessage">The type of the message.</typeparam>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Xunit.Sdk.IMessageAggregator.GetAndClear``1">
+            <summary>
+            Returns all the currently aggregated messages of the given type, and clears
+            the list for future iterations.
+            </summary>
+            <typeparam name="TMessage">The type of the message.</typeparam>
+            <returns>The aggregated messages.</returns>
+        </member>
+        <member name="T:Xunit.Sdk.IMessageBus">
+            <summary>
+            This is an internal interface, and is not intended to be called from end-user code.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IMessageBus.QueueMessage(Xunit.Abstractions.IMessageSinkMessage)">
+            <summary/>
+        </member>
+        <member name="T:Xunit.Sdk.InlineDataDiscoverer">
+            <summary>
+            Implementation of <see cref="T:Xunit.Sdk.IDataDiscoverer"/> used to discover the data
+            provided by <see cref="T:Xunit.InlineDataAttribute"/>.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.InlineDataDiscoverer.GetData(Xunit.Abstractions.IAttributeInfo,Xunit.Abstractions.IMethodInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Xunit.Sdk.ITestCaseOrderer">
+            <summary>
+            A class implements this interface to participate in ordering tests
+            for the test runner. Test case orderers are applied using the
+            <see cref="T:Xunit.TestCaseOrdererAttribute"/>, which can be applied at
+            the assembly, test collection, and test class level.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ITestCaseOrderer.OrderTestCases``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Orders test cases for execution.
+            </summary>
+            <param name="testCases">The test cases to be ordered.</param>
+            <returns>The test cases in the order to be run.</returns>
+        </member>
         <member name="T:Xunit.Sdk.ITraitAttribute">
             <summary>
             Marker interface used by attributes which provide trait data.
             </summary>
         </member>
-        <member name="T:Xunit.Sdk.TestCaseDiscovererAttribute">
+        <member name="T:Xunit.Sdk.ITraitDiscoverer">
+            <summary>
+            This interface is implemented by discoverers that provide trait values to
+            xUnit.net v2 tests.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ITraitDiscoverer.GetTraits(Xunit.Abstractions.IAttributeInfo)">
+            <summary>
+            Gets the trait values from the trait attribute.
+            </summary>
+            <param name="traitAttribute">The trait attribute containing the trait values.</param>
+            <returns>The trait values.</returns>
+        </member>
+        <member name="T:Xunit.Sdk.IXunitTestCaseDiscoverer">
+            <summary>
+            Interface to be implemented by classes which are used to discover tests cases attached
+            to test methods that are attributed with <see cref="T:Xunit.FactAttribute"/> (or a subclass).
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IXunitTestCaseDiscoverer.Discover(Xunit.Abstractions.ITestCollection,Xunit.Abstractions.IAssemblyInfo,Xunit.Abstractions.ITypeInfo,Xunit.Abstractions.IMethodInfo,Xunit.Abstractions.IAttributeInfo)">
+            <summary>
+            Discover test cases from a test method.
+            </summary>
+            <param name="testCollection">The test collection the test cases belong to.</param>
+            <param name="assembly">The test assembly.</param>
+            <param name="testClass">The test class.</param>
+            <param name="testMethod">The test method.</param>
+            <param name="factAttribute">The fact attribute attached to the test method.</param>
+            <returns>Returns zero or more test cases represented by the test method.</returns>
+        </member>
+        <member name="T:Xunit.Sdk.IXunitTestCase">
+            <summary>
+            Represents a single test case from xUnit.net v2.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IXunitTestCase.RunAsync(Xunit.Sdk.IMessageBus,System.Object[],Xunit.Sdk.ExceptionAggregator,System.Threading.CancellationTokenSource)">
+            <summary>
+            Executes the test case, returning 0 or more result messages through the message sink.
+            </summary>
+            <param name="messageBus">The message bus to report results to.</param>
+            <param name="constructorArguments">The arguments to pass to the constructor.</param>
+            <param name="aggregator">The error aggregator to use for catching exception.</param>
+            <param name="cancellationTokenSource">The cancellation token source that indicates whether cancellation has been requested.</param>
+            <returns>Returns the summary of the test case run.</returns>
+        </member>
+        <member name="T:Xunit.Sdk.IXunitTestCollectionFactory">
+            <summary>
+            This interface is intended to be implemented by components which generate test collections.
+            End users specify the desired test collection factory by applying <see cref="T:Xunit.CollectionBehaviorAttribute"/>
+            at the assembly level.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.IXunitTestCollectionFactory.Get(Xunit.Abstractions.ITypeInfo)">
+            <summary>
+            Gets the test collection for a given test class.
+            </summary>
+            <param name="testClass">The test class.</param>
+            <returns>The test collection.</returns>
+        </member>
+        <member name="P:Xunit.Sdk.IXunitTestCollectionFactory.DisplayName">
+            <summary>
+            Gets the display name for the test collection factory. This information is shown to the end
+            user as part of the description of the test environment.
+            </summary>
+        </member>
+        <member name="T:Xunit.Sdk.RunSummary">
+            <summary>
+            Represents the statistical summary from a run of one or more tests.
+            </summary>
+        </member>
+        <member name="F:Xunit.Sdk.RunSummary.Total">
+            <summary>
+            The total number of tests run.
+            </summary>
+        </member>
+        <member name="F:Xunit.Sdk.RunSummary.Failed">
+            <summary>
+            The number of failed tests.
+            </summary>
+        </member>
+        <member name="F:Xunit.Sdk.RunSummary.Skipped">
+            <summary>
+            The number of skipped tests.
+            </summary>
+        </member>
+        <member name="F:Xunit.Sdk.RunSummary.Time">
+            <summary>
+            The total time taken to run the tests, in seconds.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.RunSummary.Aggregate(Xunit.Sdk.RunSummary)">
+            <summary>
+            Adds a run summary's totals into this run summary.
+            </summary>
+            <param name="other">The run summary to be added.</param>
+        </member>
+        <member name="T:Xunit.Sdk.XunitTestCaseDiscovererAttribute">
             <summary>
             An attribute used to decorate classes which derive from <see cref="T:Xunit.FactAttribute"/>,
             to indicate how test cases should be discovered.
             </summary>
         </member>
-        <member name="M:Xunit.Sdk.TestCaseDiscovererAttribute.#ctor(System.String,System.String)">
+        <member name="M:Xunit.Sdk.XunitTestCaseDiscovererAttribute.#ctor(System.String,System.String)">
             <summary>
-            Initializes an instance of the <see cref="T:Xunit.Sdk.TestCaseDiscovererAttribute"/> class.
+            Initializes an instance of the <see cref="T:Xunit.Sdk.XunitTestCaseDiscovererAttribute"/> class.
             </summary>
             <param name="typeName">The fully qualified type name of the discoverer
             (f.e., 'Xunit.Sdk.FactDiscoverer')</param>
             <param name="assemblyName">The name of the assembly that the discoverer type
             is located in, without file extension (f.e., 'xunit.execution')</param>
+        </member>
+        <member name="T:Xunit.Sdk.TraitDiscoverer">
+            <summary>
+            The implementation of <see cref="T:Xunit.Sdk.ITraitDiscoverer"/> which returns the trait values
+            for <see cref="T:Xunit.TraitAttribute"/>.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.TraitDiscoverer.GetTraits(Xunit.Abstractions.IAttributeInfo)">
+            <inheritdoc/>
         </member>
         <member name="T:Xunit.Sdk.TraitDiscovererAttribute">
             <summary>

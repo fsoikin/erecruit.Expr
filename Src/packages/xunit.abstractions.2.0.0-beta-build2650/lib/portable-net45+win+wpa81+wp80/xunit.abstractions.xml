@@ -106,7 +106,7 @@
             <param name="value">The string representation of the test case.</param>
             <returns>The de-serialized test case.</returns>
         </member>
-        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.Run(Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions,Xunit.Abstractions.ITestFrameworkOptions)">
+        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.RunAll(Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions,Xunit.Abstractions.ITestFrameworkOptions)">
             <summary>
             Starts the process of running all the tests in the assembly.
             </summary>
@@ -114,7 +114,7 @@
             <param name="discoveryOptions">The options to be used during test discovery.</param>
             <param name="executionOptions">The options to be used during test execution.</param>
         </member>
-        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.Run(System.Collections.Generic.IEnumerable{Xunit.Abstractions.ITestCase},Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions)">
+        <member name="M:Xunit.Abstractions.ITestFrameworkExecutor.RunTests(System.Collections.Generic.IEnumerable{Xunit.Abstractions.ITestCase},Xunit.Abstractions.IMessageSink,Xunit.Abstractions.ITestFrameworkOptions)">
             <summary>
             Starts the process of running selected tests in the assembly.
             </summary>
@@ -827,7 +827,7 @@
         </member>
         <member name="P:Xunit.Abstractions.ITestCase.SourceInformation">
             <summary>
-            Get the source file name and line where the test is defined, if requested (and known).
+            Get or sets the source file name and line where the test is defined, if requested (and known).
             </summary>
         </member>
         <member name="P:Xunit.Abstractions.ITestCase.TestCollection">
@@ -858,6 +858,11 @@
             assembly.
             </remarks>
         </member>
+        <member name="P:Xunit.Abstractions.ITestCase.Arguments">
+            <summary>
+            The arguments that will be passed to the test method.
+            </summary>
+        </member>
         <member name="T:Xunit.Abstractions.ITestCollection">
             <summary>
             Represents a group of test cases. Test collections form the basis of the parallelization in
@@ -874,6 +879,11 @@
         <member name="P:Xunit.Abstractions.ITestCollection.DisplayName">
             <summary>
             Gets the display name of the test collection.
+            </summary>
+        </member>
+        <member name="P:Xunit.Abstractions.ITestCollection.ID">
+            <summary>
+            Gets the test collection ID. Test collection equality is determined by comparing IDs.
             </summary>
         </member>
     </members>

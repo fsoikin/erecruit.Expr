@@ -269,6 +269,15 @@
             <param name="precision">The number of decimal places (valid values: 0-15)</param>
             <exception cref="T:Xunit.Sdk.EqualException">Thrown when the values are not equal</exception>
         </member>
+        <member name="M:Xunit.Assert.StrictEqual``1(``0,``0)">
+            <summary>
+            Verifies that two objects are strictly equal, using the type's default comparer.
+            </summary>
+            <typeparam name="T">The type of the objects to be compared</typeparam>
+            <param name="expected">The expected value</param>
+            <param name="actual">The value to be compared against</param>
+            <exception cref="T:Xunit.Sdk.EqualException">Thrown when the objects are not equal</exception>
+        </member>
         <member name="M:Xunit.Assert.NotEqual``1(``0,``0)">
             <summary>
             Verifies that two objects are not equal, using a default comparer.
@@ -286,6 +295,35 @@
             <param name="expected">The expected object</param>
             <param name="actual">The actual object</param>
             <param name="comparer">The comparer used to examine the objects</param>
+            <exception cref="T:Xunit.Sdk.NotEqualException">Thrown when the objects are equal</exception>
+        </member>
+        <member name="M:Xunit.Assert.NotEqual(System.Double,System.Double,System.Int32)">
+            <summary>
+            Verifies that two <see cref="T:System.Double"/> values are not equal, within the number of decimal
+            places given by <paramref name="precision"/>.
+            </summary>
+            <param name="expected">The expected value</param>
+            <param name="actual">The value to be compared against</param>
+            <param name="precision">The number of decimal places (valid values: 0-15)</param>
+            <exception cref="T:Xunit.Sdk.EqualException">Thrown when the values are equal</exception>
+        </member>
+        <member name="M:Xunit.Assert.NotEqual(System.Decimal,System.Decimal,System.Int32)">
+            <summary>
+            Verifies that two <see cref="T:System.Decimal"/> values are not equal, within the number of decimal
+            places given by <paramref name="precision"/>.
+            </summary>
+            <param name="expected">The expected value</param>
+            <param name="actual">The value to be compared against</param>
+            <param name="precision">The number of decimal places (valid values: 0-15)</param>
+            <exception cref="T:Xunit.Sdk.EqualException">Thrown when the values are equal</exception>
+        </member>
+        <member name="M:Xunit.Assert.NotStrictEqual``1(``0,``0)">
+            <summary>
+            Verifies that two objects are strictly not equal, using the type's default comparer.
+            </summary>
+            <typeparam name="T">The type of the objects to be compared</typeparam>
+            <param name="expected">The expected object</param>
+            <param name="actual">The actual object</param>
             <exception cref="T:Xunit.Sdk.NotEqualException">Thrown when the objects are equal</exception>
         </member>
         <member name="M:Xunit.Assert.DoesNotThrow(System.Action)">
@@ -332,6 +370,34 @@
             <summary/>
         </member>
         <member name="M:Xunit.Assert.ThrowsAsync``1(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Verifies that the exact exception is thrown (and not a derived exception type).
+            </summary>
+            <typeparam name="T">The type of the exception expected to be thrown</typeparam>
+            <param name="testCode">A delegate to the task to be tested</param>
+            <returns>The exception that was thrown, when successful</returns>
+            <exception cref="T:Xunit.Sdk.ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
+        </member>
+        <member name="M:Xunit.Assert.ThrowsAny``1(System.Action)">
+            <summary>
+            Verifies that the exact exception or a derived exception type is thrown.
+            </summary>
+            <typeparam name="T">The type of the exception expected to be thrown</typeparam>
+            <param name="testCode">A delegate to the code to be tested</param>
+            <returns>The exception that was thrown, when successful</returns>
+            <exception cref="T:Xunit.Sdk.ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
+        </member>
+        <member name="M:Xunit.Assert.ThrowsAny``1(System.Func{System.Object})">
+            <summary>
+            Verifies that the exact exception or a derived exception type is thrown.
+            Generally used to test property accessors.
+            </summary>
+            <typeparam name="T">The type of the exception expected to be thrown</typeparam>
+            <param name="testCode">A delegate to the code to be tested</param>
+            <returns>The exception that was thrown, when successful</returns>
+            <exception cref="T:Xunit.Sdk.ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
+        </member>
+        <member name="M:Xunit.Assert.ThrowsAnyAsync``1(System.Func{System.Threading.Tasks.Task})">
             <summary>
             Verifies that the exact exception is thrown (and not a derived exception type).
             </summary>
@@ -486,6 +552,42 @@
             <param name="comparer">The comparer used to evaluate the value's range</param>
             <exception cref="T:Xunit.Sdk.NotInRangeException">Thrown when the value is in the given range</exception>
         </member>
+        <member name="M:Xunit.Assert.ProperSubset``1(System.Collections.Generic.ISet{``0},System.Collections.Generic.ISet{``0})">
+            <summary>
+            Verifies that a set is a proper subset of another set.
+            </summary>
+            <typeparam name="T">The type of the object to be verified</typeparam>
+            <param name="expectedSuperset">The expected superset</param>
+            <param name="actual">The set expected to be a proper subset</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the actual set is not a proper subset of the expected set</exception>
+        </member>
+        <member name="M:Xunit.Assert.ProperSuperset``1(System.Collections.Generic.ISet{``0},System.Collections.Generic.ISet{``0})">
+            <summary>
+            Verifies that a set is a proper superset of another set.
+            </summary>
+            <typeparam name="T">The type of the object to be verified</typeparam>
+            <param name="expectedSubset">The expected subset</param>
+            <param name="actual">The set expected to be a proper superset</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the actual set is not a proper superset of the expected set</exception>
+        </member>
+        <member name="M:Xunit.Assert.Subset``1(System.Collections.Generic.ISet{``0},System.Collections.Generic.ISet{``0})">
+            <summary>
+            Verifies that a set is a subset of another set.
+            </summary>
+            <typeparam name="T">The type of the object to be verified</typeparam>
+            <param name="expectedSuperset">The expected superset</param>
+            <param name="actual">The set expected to be a subset</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the actual set is not a subset of the expected set</exception>
+        </member>
+        <member name="M:Xunit.Assert.Superset``1(System.Collections.Generic.ISet{``0},System.Collections.Generic.ISet{``0})">
+            <summary>
+            Verifies that a set is a superset of another set.
+            </summary>
+            <typeparam name="T">The type of the object to be verified</typeparam>
+            <param name="expectedSubset">The expected subset</param>
+            <param name="actual">The set expected to be a superset</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the actual set is not a superset of the expected set</exception>
+        </member>
         <member name="M:Xunit.Assert.Contains(System.String,System.String)">
             <summary>
             Verifies that a string contains a given sub-string, using the current culture.
@@ -519,6 +621,72 @@
             <param name="actualString">The string to be inspected</param>
             <param name="comparisonType">The type of string comparison to perform</param>
             <exception cref="T:Xunit.Sdk.DoesNotContainException">Thrown when the sub-string is present inside the given string</exception>
+        </member>
+        <member name="M:Xunit.Assert.StartsWith(System.String,System.String)">
+            <summary>
+            Verifies that a string starts with a given string, using the current culture.
+            </summary>
+            <param name="expectedStartString">The string expected to be at the start of the string</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the string does not start with the expected string</exception>
+        </member>
+        <member name="M:Xunit.Assert.StartsWith(System.String,System.String,System.StringComparison)">
+            <summary>
+            Verifies that a string starts with a given string, using the given comparison type.
+            </summary>
+            <param name="expectedStartString">The string expected to be at the start of the string</param>
+            <param name="actualString">The string to be inspected</param>
+            <param name="comparisonType">The type of string comparison to perform</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the string does not start with the expected string</exception>
+        </member>
+        <member name="M:Xunit.Assert.EndsWith(System.String,System.String)">
+            <summary>
+            Verifies that a string ends with a given string, using the current culture.
+            </summary>
+            <param name="expectedEndString">The string expected to be at the end of the string</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the string does not end with the expected string</exception>
+        </member>
+        <member name="M:Xunit.Assert.EndsWith(System.String,System.String,System.StringComparison)">
+            <summary>
+            Verifies that a string ends with a given string, using the given comparison type.
+            </summary>
+            <param name="expectedEndString">The string expected to be at the end of the string</param>
+            <param name="actualString">The string to be inspected</param>
+            <param name="comparisonType">The type of string comparison to perform</param>
+            <exception cref="T:Xunit.Sdk.ContainsException">Thrown when the string does not end with the expected string</exception>
+        </member>
+        <member name="M:Xunit.Assert.Matches(System.String,System.String)">
+            <summary>
+            Verifies that a string matches a regular expression.
+            </summary>
+            <param name="expectedRegexPattern">The regex pattern expected to match</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.MatchesException">Thrown when the string does not match the regex pattern</exception>
+        </member>
+        <member name="M:Xunit.Assert.Matches(System.Text.RegularExpressions.Regex,System.String)">
+            <summary>
+            Verifies that a string matches a regular expression.
+            </summary>
+            <param name="expectedRegex">The regex expected to match</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.MatchesException">Thrown when the string does not match the regex</exception>
+        </member>
+        <member name="M:Xunit.Assert.DoesNotMatch(System.String,System.String)">
+            <summary>
+            Verifies that a string does not match a regular expression.
+            </summary>
+            <param name="expectedRegexPattern">The regex pattern expected not to match</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.DoesNotMatchException">Thrown when the string matches the regex pattern</exception>
+        </member>
+        <member name="M:Xunit.Assert.DoesNotMatch(System.Text.RegularExpressions.Regex,System.String)">
+            <summary>
+            Verifies that a string does not match a regular expression.
+            </summary>
+            <param name="expectedRegex">The regex expected not to match</param>
+            <param name="actualString">The string to be inspected</param>
+            <exception cref="T:Xunit.Sdk.DoesNotMatchException">Thrown when the string matches the regex</exception>
         </member>
         <member name="M:Xunit.Assert.Equal(System.String,System.String)">
             <summary>
@@ -816,6 +984,18 @@
             </summary>
             <param name="expected">The expected object value</param>
         </member>
+        <member name="T:Xunit.Sdk.DoesNotMatchException">
+            <summary>
+            Exception thrown when a string unexpectedly matches a regular expression.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.DoesNotMatchException.#ctor(System.Object,System.Object)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.DoesNotMatchException"/> class.
+            </summary>
+            <param name="expectedRegexPattern">The regular expression pattern expected not to match</param>
+            <param name="actual">The actual value</param>
+        </member>
         <member name="T:Xunit.Sdk.DoesNotThrowException">
             <summary>
             Exception thrown when Assert.DoesNotThrow fails.
@@ -847,6 +1027,18 @@
             <summary>
             Creates a new instance of the <see cref="T:Xunit.Sdk.EmptyException"/> class.
             </summary>
+        </member>
+        <member name="T:Xunit.Sdk.EndsWithException">
+            <summary>
+            Exception thrown when a string does not end with the expected value.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.EndsWithException.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.EndsWithException"/> class.
+            </summary>
+            <param name="expected">The expected string value</param>
+            <param name="actual">The actual value</param>
         </member>
         <member name="T:Xunit.Sdk.EqualException">
             <summary>
@@ -965,6 +1157,18 @@
             <param name="expectedTypeName">The expected type name</param>
             <param name="actualTypeName">The actual type name</param>
         </member>
+        <member name="T:Xunit.Sdk.MatchesException">
+            <summary>
+            Exception thrown when a string does not match a regular expression.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.MatchesException.#ctor(System.Object,System.Object)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.MatchesException"/> class.
+            </summary>
+            <param name="expectedRegexPattern">The expected regular expression pattern</param>
+            <param name="actual">The actual value</param>
+        </member>
         <member name="T:Xunit.Sdk.NoneException">
             <summary>
             Exception thrown when the collection did not contain exactly zero elements.
@@ -1070,6 +1274,26 @@
         <member name="M:Xunit.Sdk.ParameterCountMismatchException.#ctor">
             <summary/>
         </member>
+        <member name="T:Xunit.Sdk.ProperSubsetException">
+            <summary>
+            Exception thrown when a set is not a proper subset of another set.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ProperSubsetException.#ctor(System.Collections.IEnumerable,System.Collections.IEnumerable)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.ProperSubsetException"/> class.
+            </summary>
+        </member>
+        <member name="T:Xunit.Sdk.ProperSupersetException">
+            <summary>
+            Exception thrown when a set is not a proper superset of another set.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.ProperSupersetException.#ctor(System.Collections.IEnumerable,System.Collections.IEnumerable)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.ProperSupersetException"/> class.
+            </summary>
+        </member>
         <member name="T:Xunit.Sdk.PropertyChangedException">
             <summary>
             Exception thrown when code unexpectedly fails change a property.
@@ -1104,6 +1328,38 @@
             Initializes a new instance of the <see cref="T:Xunit.Sdk.SingleException"/> class.
             </summary>
             <param name="count">The numbers of items in the collection.</param>
+        </member>
+        <member name="T:Xunit.Sdk.StartsWithException">
+            <summary>
+            Exception thrown when a string does not start with the expected value.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.StartsWithException.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.StartsWithException"/> class.
+            </summary>
+            <param name="expected">The expected string value</param>
+            <param name="actual">The actual value</param>
+        </member>
+        <member name="T:Xunit.Sdk.SubsetException">
+            <summary>
+            Exception thrown when a set is not a subset of another set.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.SubsetException.#ctor(System.Collections.IEnumerable,System.Collections.IEnumerable)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.SubsetException"/> class.
+            </summary>
+        </member>
+        <member name="T:Xunit.Sdk.SupersetException">
+            <summary>
+            Exception thrown when a set is not a superset of another set.
+            </summary>
+        </member>
+        <member name="M:Xunit.Sdk.SupersetException.#ctor(System.Collections.IEnumerable,System.Collections.IEnumerable)">
+            <summary>
+            Creates a new instance of the <see cref="T:Xunit.Sdk.SupersetException"/> class.
+            </summary>
         </member>
         <member name="T:Xunit.Sdk.ThrowsException">
             <summary>

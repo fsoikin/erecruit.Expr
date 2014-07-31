@@ -176,7 +176,7 @@ namespace erecruit
 
 			var id = Expr.Create( ( T t ) => t );
 			return Expression.Lambda<Func<T, U>>(
-					exprs.Select( e => id.Compose( e ).Body ).Aggregate( fold ),
+					exprs.Where( e => e != null ).Select( e => id.Compose( e ).Body ).Aggregate( fold ),
 					id.Parameters );
 		}
 

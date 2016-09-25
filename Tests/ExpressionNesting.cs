@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -96,5 +97,16 @@ namespace erecruit.Tests
 			Assert.Equal( false, c( new[] { "a", "ab" } ) );
 			Assert.Equal( true, c( new[] { "a", "ab", "12345" } ) );
 		}
+
+		[Fact]
+		public void Should_expand_expression_taken_from_static_property()
+		{
+			var e = Expr.Create( ( string a, string b ) => StaticExpr.Call( a + b ) );
+			var c = e.Expand().Compile();
+			Assert.Equal( 3, c( "a", "ab" ) );
+			Assert.Equal( 5, c( "xyz", "ab" ) );
+		}
+
+		static Expression<Func<string, int>> StaticExpr = s => s.Length;
 	}
 }

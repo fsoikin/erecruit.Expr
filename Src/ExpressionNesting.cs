@@ -67,33 +67,49 @@ namespace erecruit
 				return mid == _callMethod1 || mid == _callMethod2 || mid == _callMethod3;
 			}
 
-			object DigOutConstant( Expression e ) {
+			object DigOutConstant( Expression e )
+			{
 				var c = e as ConstantExpression;
 				var m = e as MemberExpression;
 				if ( c != null ) return c.Value;
-				if ( m != null ) {
-					var obj = DigOutConstant( m.Expression );
-					if ( obj == null ) return null;
+				if ( m != null )
+				{
+					var getValue = _memberGetters.GetOrAdd( m.Member, CreateMemberGetter );
 
-					var getValue = _memberGetters.GetOrAdd( m.Member, member => {
-						var param = Expression.Parameter( typeof( object ) );
-						return Expression.Lambda<Func<object, object>>(
-							Expression.Convert(
-								Expression.MakeMemberAccess(
-									Expression.Convert( param, member.DeclaringType ),
-									member
-								),
-								typeof( object )
-							),
-							param
-						)
-						.Compile();
-					} );
-					return getValue( obj );
+					if ( IsStatic( m.Member ) )
+					{
+						return getValue( null );
+					}
+					else
+					{
+						var obj = DigOutConstant( m.Expression );
+						if ( obj == null ) return null;
+
+						return getValue( obj );
+					}
 				}
 
 				return null;
 			}
+
+			private static Func<object, object> CreateMemberGetter( MemberInfo member )
+			{
+				var param = Expression.Parameter( typeof( object ) );
+				return Expression.Lambda<Func<object, object>>(
+					Expression.Convert(
+						Expression.MakeMemberAccess(
+							IsStatic( member ) ? null : Expression.Convert( param, member.DeclaringType ),
+							member
+						),
+						typeof( object )
+					),
+					param
+				)
+				.Compile();
+			}
+
+			static bool IsStatic( MemberInfo member ) =>
+				( member as PropertyInfo )?.GetMethod?.IsStatic ?? ( member as MethodInfo )?.IsStatic ?? ( member as FieldInfo )?.IsStatic ?? false;
 
 			static LambdaExpression GetSubstituteFor( MethodInfo m ) {
 				return _expressionSubstitutes.GetOrAdd( m, x => {

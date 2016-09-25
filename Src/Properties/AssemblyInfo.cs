@@ -1,16 +1,12 @@
-﻿using System.Resources;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Resources;
 
-[assembly: AssemblyTitle("erecruit.Expr")]
+[assembly: AssemblyTitle( "erecruit.Expr" )]
 [assembly: AssemblyDescription( "erecruit Expression Transform Library" )]
-[assembly: AssemblyCompany("erecruit")]
-[assembly: AssemblyProduct("erecruit.Expr")]
-[assembly: AssemblyCopyright("Copyright © erecruit 2014")]
-[assembly: NeutralResourcesLanguage("en")]
+[assembly: AssemblyCompany( "erecruit" )]
+[assembly: AssemblyProduct( "erecruit.Expr" )]
+[assembly: AssemblyCopyright( "Copyright © erecruit 2014" )]
+[assembly: NeutralResourcesLanguage( "en" )]
 
-[assembly: AssemblyVersion(Version.Value)]
-[assembly: AssemblyFileVersion(Version.Value)]
-
-static class Version { public const string Value = "0.1.2.0"; }
+[assembly: AssemblyVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0.0")]

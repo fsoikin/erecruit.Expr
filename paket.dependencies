@@ -1,0 +1,12 @@
+source https://www.nuget.org/api/v2/
+nuget xunit.runner.visualstudio >= 2.1.0 version_in_path: true
+
+group Build
+source https://www.nuget.org/api/v2/
+
+nuget FAKE
+
+group Test
+source https://www.nuget.org/api/v2/
+nuget xunit ~> 2.1 framework: >= net45
+nuget xunit.runner.console ~> 2.1 framework: >= net45

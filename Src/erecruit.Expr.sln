@@ -1,13 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr", "erecruit.Expr.csproj", "{B3C4AAE2-4F6B-463F-A97E-2C7F9DCCF929}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr.Tests", "..\Tests\erecruit.Expr.Tests.csproj", "{78D5A714-4061-46E2-8869-71AD92EF0F41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr.net45", "erecruit.Expr.net45.csproj", "{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "erecruit.Expr.net45", "net45\erecruit.Expr.net45.csproj", "{56BB61C5-8EA2-4976-880C-BB17F12CA3F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2C0F5D35-4EDC-4334-9C93-42859FCF7A53}"
+	ProjectSection(SolutionItems) = preProject
+		..\.travis.yml = ..\.travis.yml
+		..\build.fsx = ..\build.fsx
+		..\build.ps1 = ..\build.ps1
+		..\build.sh = ..\build.sh
+		..\paket.dependencies = ..\paket.dependencies
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A3E95C34-251E-4B47-9FCA-57D4CCEBD732}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\PatchVersion.fsx = ..\build\PatchVersion.fsx
+		..\build\Publish.fsx = ..\build\Publish.fsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +45,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A3E95C34-251E-4B47-9FCA-57D4CCEBD732} = {2C0F5D35-4EDC-4334-9C93-42859FCF7A53}
 	EndGlobalSection
 EndGlobal

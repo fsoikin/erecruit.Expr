@@ -1,0 +1,14 @@
+type file
+id erecruit.Expr
+title erecruit Expression Transform Library
+version 0.0.0.0
+licenseUrl http://opensource.org/licenses/MIT
+description erecruit Expression Transform Library.
+tags expression quotation expr
+projectUrl https://github.com/erecruit/erecruit.Expr
+licenseUrl https://github.com/erecruit/erecruit.Expr/blob/master/LICENSE
+authors erecruit, Fyodor Soikin
+owners erecruit
+files
+	bin\Release\*.dll ==> lib\portable-windows8+net45
+	net45\bin\Release\*.dll ==> lib\net45

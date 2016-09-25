@@ -1,0 +1,9 @@
+language: csharp
+
+sudo: false  # use the new container-based Travis infrastructure
+
+before_script:
+ - chmod +x ./build.sh
+
+script: 
+  - 'if [[ $TRAVIS_PULL_REQUEST = "false" && $TRAVIS_BRANCH = "publish" ]] ; then ./build.sh Publish "Version=0.2.$TRAVIS_BUILD_NUMBER" ; else ./build.sh RunTests ; fi'

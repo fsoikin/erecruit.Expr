@@ -16,6 +16,9 @@ let publishPackage buildConfig templateFile () =
                           TemplateFile = templateFile
                           BuildConfig = buildConfig
                           OutputPath = "./nupkg" } )
+
+  ProcessHelper.enableProcessTracing <- false
   Paket.Push (fun p -> { p with
                           WorkingDir = "./nupkg"
                           ApiKey = nugetApiKey } )
+  ProcessHelper.enableProcessTracing <- true

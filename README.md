@@ -1,5 +1,6 @@
 # Juice your .NET Expression Trees for everything they've got!
-[![Build Status](https://travis-ci.org/erecruit/erecruit.Expr.svg?branch=master)](https://travis-ci.org/erecruit/erecruit.Expr)
+[![Travis Build Status](https://travis-ci.org/erecruit/erecruit.Expr.svg?branch=master)](https://travis-ci.org/erecruit/erecruit.Expr)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/add0oi7x29ku7avw?svg=true)](https://ci.appveyor.com/project/fsoikin/erecruit-expr)
 
 1. [Code reuse: invoke (i.e. embed) expressions within other, bigger expressions](#reuse).
 2. [More code reuse: call [specially formatted] static and extension methods within expressions](#more-reuse).

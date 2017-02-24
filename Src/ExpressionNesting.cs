@@ -35,7 +35,7 @@ namespace erecruit
 			return q.Provider.CreateQuery<T>( q.Expression.Expand() );
 		}
 
-		class V : ExpressionVisitor
+		class V : Expr.ExpressionVisitorWithDepthCheck
 		{
 			static readonly MethodInfo _callMethod1 = new Func<Expression<Func<int, int>>, int, int>( Call<int, int> ).GetMethodInfo().GetGenericMethodDefinition();
 			static readonly MethodInfo _callMethod2 = new Func<Expression<Func<int, int, int>>, int, int, int>( Call<int, int, int> ).GetMethodInfo().GetGenericMethodDefinition();

@@ -234,7 +234,7 @@ namespace erecruit
 					();
 		}
 
-		class VReplaceParameters : System.Linq.Expressions.ExpressionVisitor
+		class VReplaceParameters : ExpressionVisitorWithDepthCheck
 		{
 			private readonly IDictionary<ParameterExpression, Expression> _substitutes;
 			public VReplaceParameters( IDictionary<ParameterExpression, Expression> substitutes ) { _substitutes = substitutes; }
@@ -258,6 +258,38 @@ namespace erecruit
 			{
 				Contract.Ensures( Contract.Result<Expression<Func<T, X>>>() != null );
 				return Expression.Lambda<Func<T, X>>( Expression.Convert( _source.Body, typeof( X ) ), _source.Parameters );
+			}
+		}
+
+		/// <summary>
+		/// ExpressionVisitor (used by methods in this library) is recursive so it could cause stack overflow with very deep expression trees
+		/// Also, even if some large expressions would be succesfully expanded, there might be more problems later with them 
+		/// (eg. when converted to SQL it might result in statement having more that maximum allowed number of parameters)
+		/// Limit here was established after testing the Expand method with default stack size for IIS process (256KB for 32bit and 512KB for 64bit).
+		/// Running with larger stack size or release version should allow for more recursive iterations. Also, the validation itself wastes some stack, so removing it might allow more iterations, at the risk of not having protection against stack overflow.
+		/// NOTE: System.Runtime.CompilerServices.RuntimeHelpers.EnsureSufficientExecutionStack() might work instead of this on some platforms
+		/// </summary>
+		public static int MaxRecursionDepth = 1500;
+
+		internal abstract class ExpressionVisitorWithDepthCheck : System.Linq.Expressions.ExpressionVisitor
+		{
+			private int _currRecursionDepth = 0;
+
+			public override Expression Visit(Expression node)
+			{
+				_currRecursionDepth++;
+				if (_currRecursionDepth > MaxRecursionDepth)
+				{
+					throw new InvalidOperationException($"Maximum recursion depth ({MaxRecursionDepth}) exceeded. This happens when expression tree has too many nested nodes.");
+				}
+				try
+				{
+					return base.Visit(node);
+				}
+				finally
+				{
+					_currRecursionDepth--;
+				}
 			}
 		}
 	}

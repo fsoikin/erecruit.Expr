@@ -82,6 +82,56 @@ namespace erecruit.Tests
 			Assert.Throws<InvalidOperationException>( () => e1.Expand() );
 		}
 
+		[Fact]
+		public void Should_not_cause_stack_overflow_with_expression_tree_too_deep()
+		{
+			const int batchSize = 500;
+			Func<int, bool> testExpand = size =>
+			{
+				var items = Enumerable.Range(0, size);
+				var equalToAnyExpr = Expr.EqualToAny(items);
+				var e1 = Expr.Create((int num) => equalToAnyExpr.Call(num));
+				try
+				{
+					e1.Expand();
+					return true;
+				}
+				catch (InvalidOperationException)
+				{
+					return false;
+				}
+			};
+			int stackSize = ((IntPtr.Size == 8) ? 512 : 256) * 1024;//simulate minimum stack size in most environments: 256KB for 32bit process, 512KB for 64bit process. Assumption here is that test environment matches deployment.
+			Func<int, bool> testExpandWithMinStackSize = size =>
+			{
+				bool result = false;
+				Exception caughtEx = null;
+				var expandThread = new System.Threading.Thread(() =>
+				{
+					try
+					{
+						result = testExpand(size);
+					}
+					catch (Exception ex)
+					{
+						caughtEx = ex;
+					}
+				}, stackSize);
+				expandThread.Start();
+				expandThread.Join();
+				if (caughtEx != null)
+					throw caughtEx;
+				else
+					return result;
+			};
+			var results = Enumerable.Range(0, 20).Select(idx => testExpandWithMinStackSize(idx * batchSize)).ToArray();
+			var errIdx = Array.IndexOf(results, false);//find first failure
+			//confirm it succeeds for first few sizes, and then fails after some limit was reached
+			Assert.True(errIdx > 0);
+			Assert.All(results.Take(errIdx), result => Assert.True(result));
+			Assert.All(results.Skip(errIdx), result => Assert.False(result));
+		}
+
 		class A
 		{
 			public string S { get; set; }
